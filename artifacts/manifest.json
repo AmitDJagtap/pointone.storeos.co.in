@@ -1,0 +1,12 @@
+{
+  "skill": "desktop-alerter",
+  "version": "1.0.0",
+  "files": [
+    {"path": "alert.py", "type": "script", "required": true},
+    {"path": "artifacts/cafe_terrace.png", "type": "image", "required": false, "note": "sample artifact image"}
+  ],
+  "download": {
+    "skills": "https://store.chaikaapi.co.in/{domain}/skills/desktop-alerter",
+    "artifacts": "https://store.chaikaapi.co.in/{domain}/artifacts/alert.py"
+  }
+}
