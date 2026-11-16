@@ -1,54 +1,36 @@
 ---
-name: desktop-alerter
-description: Use when an agent needs to raise a desktop alert popup on the local PC with image, text, custom ACK/Cancel buttons, and a repeating sound until acknowledged.
+name: point-one
+description: PointOne Windows desktop app — alert popup + POS webview + device activation.
 ---
 
-# Desktop Alerter (alert.py)
+# PointOne desktop app
 
-A desktop popup that shows an image + text with ACK / Cancel buttons. Beeps every N seconds until acknowledged. Works on Windows (winsound) and Linux (paplay fallback, sound silently skipped if unavailable).
+Windows desktop app for store PCs: alert popup engine + POS (pos.storeos.co.in) in a webview + device activation via admin approval on store.chaikaapi.co.in.
 
-## Install
+## Install (one-time)
+1. Download `PointOne.exe` from this skill's artifacts (presigned URL from `GET /skills/point-one/artifacts`).
+2. Run it. First run shows the activation screen: enter the store staff email.
+3. The app sends hostname / local + public IP / MAC / city-location with an approval request.
+4. Admin approves on store.chaikaapi.co.in. The app picks it up within ~5s and opens.
+5. Token is saved in `%APPDATA%\pointone\device.json`. Delete that file to re-activate.
 
-Requirements: Python 3 with `tkinter` and `Pillow`.
+## Use
+- Tabs: **POS** (opens pos.storeos.co.in in-window), **Alerts** (test alert popup), **This device** (device info + deactivate).
+- Alert popup: image + text + ACK/Cancel buttons, repeating beep until acknowledged. Exit code 0 = ACK, 1 = Cancel.
+- CLI alert mode: `PointOne.exe --alert --title "..." --text "..." [--image img.png] [--interval 10]`.
 
-```bash
-pip install pillow   # tkinter ships with Python on Windows
-```
-
-## Run
-
-```bash
-python alert.py --title "KITCHEN CHECK" --text "Check the new order on POS" --image cafe_terrace.png --interval 10
-```
-
-- Window is always-on-top, centered.
-- **ACK** = green button (Enter). **Cancel** = grey button (Esc).
-- Sound repeats every `--interval` seconds until ACK or Cancel.
-- Exit code: `0` = ACKed, `1` = Cancelled.
-
-## Options
-
+## Flags
 | Flag | Default | Meaning |
 |---|---|---|
-| `--title` | `ALERT` | Window title / bold headline |
-| `--text` | `Check this` | Body text (wraps at ~340px) |
-| `--image` | none | PNG/JPG image path (max 320x240, aspect preserved) |
-| `--interval` | `10` | Seconds between sound repeats |
-| `--test` | off | Auto-close after 6s with exit code 0 (smoke test) |
+| `--title` | ALERT | popup headline |
+| `--text` | Check this | body text |
+| `--image` | none | PNG/JPG, max 320x240 |
+| `--interval` | 10 | seconds between beeps |
+| `--test` | — | auto-close after 6s (smoke test) |
 
-## Agent integration
+## Requirements
+- Windows 10/11 x64 (WebView2 runtime ships with Win11 / Edge).
+- Single 16 MB exe, no installer, no admin rights needed.
 
-```python
-import subprocess, sys
-r = subprocess.run([sys.executable, "alert.py", "--title", "...", "--text", "...", "--interval", "10"])
-if r.returncode == 0:
-    print("ACKed")
-else:
-    print("Cancelled")
-```
-
-## Notes
-
-- Linux: tkinter alert still shows; sound plays via `paplay` if available, otherwise silently skipped.
-- Keep the image small (max 320x240) so the popup stays compact.
-- The default `cafe_terrace.png` is a sample artifact; agents should use their own relevant images.
+## Source
+- Repo: `github.com/AmitDJagtap/pointone.storeos.co.in` (alert.py popup engine + pointone.py shell).
