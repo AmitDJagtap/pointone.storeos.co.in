@@ -34,7 +34,7 @@ IS_WIN = sys.platform == "win32"
 
 APP_NAME = "PointOne"
 POS_URL = "https://pos.storeos.co.in"
-API_BASE = "https://store.chaikaapi.co.in"          # ckapp backend
+API_BASE = "https://api.chaikaapi.co.in/ops"        # ckapp backend (custom domain strips /ops server-side)
 AUTH_REQUEST_URL = f"{API_BASE}/pointone/auth/request"
 AUTH_STATUS_URL = f"{API_BASE}/pointone/auth/status"
 ALERTS_POLL_URL = f"{API_BASE}/pointone/alerts/pending"
