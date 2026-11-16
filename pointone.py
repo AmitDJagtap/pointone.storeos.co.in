@@ -161,11 +161,11 @@ class Api:
                 if data.get("status") == "approved":
                     save_token({"email": data.get("email", ""), "store": data.get("store", ""),
                                 "token": data.get("token", ""), "approved_at": data.get("approved_at", "")})
-                    if webview:
-                        webview.windows[0].evaluate_js("window.__setView('main')")
+                    if webview and webview.windows:
+                        webview.windows[0].load_html(MAIN_HTML)
                     return
                 if data.get("status") in ("denied", "expired"):
-                    if webview:
+                    if webview and webview.windows:
                         webview.windows[0].evaluate_js(
                             f"window.__authResult({json.dumps(data.get('status'))})")
                     return
