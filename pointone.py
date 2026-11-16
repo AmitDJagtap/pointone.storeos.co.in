@@ -270,6 +270,7 @@ footer{padding:8px 16px;font-size:11px;color:#5c5c63;border-top:1px solid #2c2d3
 <button class="big red" onclick="deactivate()">Deactivate device</button></div>
 </main><footer id="who"></footer>
 <script>
+function safe(fn){try{return fn()}catch(e){}}
 function setv(v){['pos','alerts','info'].forEach(x=>{
  document.getElementById('p-'+x).classList.toggle('on',x===v);
  document.getElementById('t-'+x).classList.toggle('on',x===v);});
@@ -282,10 +283,15 @@ window.__setView=function(v){
 async function deactivate(){await pywebview.api.cancel_approval();
  // token removal handled server-side; simple local signout:
  location.href='about:blank';}
-pywebview.api.auth_status().then(s=>{
- document.getElementById('who').textContent=s.authenticated?
-  ('Activated: '+s.email+(s.store?' · store '+s.store:'')):'';});
-setv('pos');
+function init(){
+ safe(()=>pywebview.api.auth_status()).then(function(s){ if(!s) return;
+  document.getElementById('who').textContent=s.authenticated?
+   ('Activated: '+s.email+(s.store?' · store '+s.store:'')):'';});
+ setv('pos');}
+if(window.pywebview && window.pywebview.api){init();}
+else{window.addEventListener('pywebviewready',init);
+ // fallback: init anyway after 1.5s if event never fires
+ setTimeout(function(){if(!document.getElementById('p-pos').classList.contains('on'))init();},1500);}
 </script></body></html>"""
 
 
